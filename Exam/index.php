@@ -237,6 +237,17 @@ if( isset( $_SESSION['sUserName'] ) )
        }
     });
 
+    $('#btnEditProduct').click(function(){
+        if(selectedId!=""){
+            $.post(   'api/api-edit-product.php?id='+selectedId ,
+                $('#frmProdReg').serialize(),
+                function( jData ){
+                    console.log( jData );
+                    selectedId="";
+                }); // AJAX
+        }
+    });
+
 
 
     function getContent(elem){
