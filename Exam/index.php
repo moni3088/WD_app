@@ -21,7 +21,7 @@ if( isset( $_SESSION['sUserName'] ) )
 <head>
     <meta charset="UTF-8">
     <title>Stuff</title>
-    <link rel="stylesheet" href="styles/style-main.css">
+    <link rel="stylesheet" href="css/style-main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>

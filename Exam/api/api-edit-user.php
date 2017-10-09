@@ -10,19 +10,47 @@ $user->firstName = $_POST["firstName"];
 $user->lastName = $_POST["lastName"];
 $user->userName = $_POST["userName"];
 $user->email = $_POST["email"];
-$user->password = $_POST["password"];
 
 //convert user object to json
 $jUser = json_encode($user);
 
 //convert json object to associative array & push it to the arrayNewUser
 $decodedNewUserData = json_decode($jUser,true);
-array_push($arrayNewUser, $decodedNewUserData);
 
 //get content of users.txt and convert the json objects to associative array
 $jsonString = file_get_contents( '../data/users.txt', FILE_USE_INCLUDE_PATH );
 $decodedCurrentUsers = json_decode($jsonString, true);
-array_push($arrayCurrentUser, $decodedCurrentUsers);
+
+for($i=0; $i<sizeof($decodedCurrentUsers);$i++){
+    if($sSelectedUserId == $decodedCurrentUsers[$i]["id"]){
+        if(($decodedCurrentUsers[$i]["firstName"]!=$_POST["firstName"]) &&
+            ($_POST["firstName"]!=null)){
+            $decodedCurrentUsers[$i]["firstName"]=$_POST["firstName"];
+        }
+
+        if(($decodedCurrentUsers[$i]["lastName"]!=$_POST["lastName"]) &&
+            ($_POST["lastName"]!=null)){
+            $decodedCurrentUsers[$i]["lastName"]=$_POST["lastName"];
+        }
+        if(($decodedCurrentUsers[$i]["userName"]!=$_POST["userName"]) &&
+            ($_POST["userName"]!=null)){
+            $decodedCurrentUsers[$i]["userName"]=$_POST["userName"];
+        }
+
+        if(($decodedCurrentUsers[$i]["email"]!=$_POST["email"]) &&
+            ($_POST["email"]!=null)){
+            $decodedCurrentUsers[$i]["email"]=$_POST["email"];
+        }
+
+    }
+}
+
+
+$encodedCurrentUsers = json_encode(array_values($decodedCurrentUsers));
+
+file_put_contents("../data/users.txt", $encodedCurrentUsers, FILE_USE_INCLUDE_PATH);
+
+echo $encodedCurrentUsers;
 
 
 

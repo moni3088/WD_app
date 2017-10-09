@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Stuff</title>
-    <link rel="stylesheet" href="styles/style-nav.css">
+    <link rel="stylesheet" href="css/style-nav.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
