@@ -1,0 +1,17 @@
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.middle{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+}
+#frmUserReg{
+    display: table-cell;
+    vertical-align: middle;
+    
+}

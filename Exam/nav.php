@@ -18,7 +18,7 @@
         console.log("logout clicked");
         //pass data from the formto the server
         // url, data, callback
-        $.post('api-logout-user.php', $('#frmUserReg').serialize(), function ( sData ) {
+        $.post('api/api-logout-user.php', $('#frmUserReg').serialize(), function ( sData ) {
             console.log( sData );
             logInPage.style.display = "grid";
             adminDashboard.style.display = "none";

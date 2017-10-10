@@ -3,15 +3,26 @@ session_start();
 
 $sName = "";
 $logIn = "";
-$auth = "";
+$authAdmin = "";
+$authClient = "";
 $dataCategory="";
-if( isset( $_SESSION['sUserName'] ) )
-{
-    // show the welcome page
-    // echo "YES";
-    $auth  = "show";
+$navDisplay="";
+
+if( isset($_SESSION['userName'])) {
+    if(($_SESSION['userName'] == "admin")){
+        $authAdmin  = "show";
+        $authClient = "";
+        $navDisplay = "show";
+
+    }else{
+        $authClient  = "show";
+        $authAdmin = "";
+        $navDisplay = "show";
+    }
 }else{
     $logIn = "show";
+    $authAdmin  = "";
+    $authClient = "";
 }
 
 ?>
@@ -20,31 +31,31 @@ if( isset( $_SESSION['sUserName'] ) )
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Stuff</title>
+    <title>WebShop</title>
     <link rel="stylesheet" href="css/style-main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 
+<nav class ="page <?php echo $navDisplay;?>">
+    <?php require_once("nav.php"); ?>
+</nav>
 
 <div id = "logInPage" class="page <?php echo $logIn;?>">
     <div>
         <h2> Please log in to start your day!</h2>
         <form id = "frmAdminLogin">
-         <input type ="text" class="emailImput" name = "email" placeholder="email">
-         <input type ="text" class="passImput"name = "password" placeholder="password">
-         <button type = "button" id="btnLogIn">LogIn</button>
-
-         <div id="lblLoginError" class="cMarginTop10"></div>
+            <input type ="text" class="emailImput" name = "email" placeholder="email">
+            <input type ="text" class="passImput"name = "password" placeholder="password">
+            <button type = "button" id="btnLogIn">LogIn</button>
+            <p>Don't have an account? Register <a href="registerUser.php">here</a></p>
+            <div id="lblLoginError" class="cMarginTop10"></div>
         </form>
     </div>
 </div>
 
 
-<div id = "adminDashboard" class="page <?php echo $auth;?>">
-    <nav>
-        <?php require_once("nav.php"); ?>
-    </nav>
+<div id = "adminDashboard" class="page <?php echo $authAdmin;?>">
 
     <div id="container">
 
@@ -84,24 +95,17 @@ if( isset( $_SESSION['sUserName'] ) )
     </div>
 </div>
 
+<div id = "clientDashboard" class="page <?php echo $authClient;?>">
+
+    <div class ="container">
+        <h1>Book of Clients</h1>
+    </div>
+
+
+</div>
+
 
 <script>
-    // $('body').css('background-color','blue');
-
-    //get data from server(reload page)
-    //$.get()
-    //$.getJSON() -> instead of JSON parse.
-    //$.ajax().done().fail(); -> chaining the fucntions with . in callback
-    /* $.getJSON('api-get-users.php', function(ajUsers){
-
-         for(var i = 0; i<ajUsers.length; i++){
-             var sDivUser = '<div>\
-                              <span>'+ajUsers[i].id+'</span>\
-                              <span>'+ajUsers[i].name+'</span>\
-                             </div>'
-             $('#container').append(sDivUser);
-         }
-     });*/
 
     var selectedId="";
 
@@ -125,16 +129,25 @@ if( isset( $_SESSION['sUserName'] ) )
         console.log("is admin clicked");
         //pass data from the formto the server
         // url, data, callback
-        $.post('../api/api-verify-admin.php', $('#frmAdminLogin').serialize(), function ( sData ) {
-            console.log( sData );
+        $.post('./api/api-verify-user.php', $('#frmAdminLogin').serialize(), function ( sData ) {
+
             var jData = JSON.parse(sData);
-            if(jData.login == "ok"){
-                console.log("yeureka!");
+            if(jData.login == "admin"){
+
                 adminDashboard.style.display = "grid";
                 logInPage.style.display = "none";
+                clientDashboard.style.display = "none";
 
-            }else{
-                console.log("non-yeureka!");
+            }
+            if(jData.login == "client"){
+
+                clientDashboard.style.display = "grid";
+                logInPage.style.display = "none";
+                adminDashboard.style.display = "none";
+
+            }
+            if((jData.login != "client")&&(jData.login != "admin") ){
+
                 $("#lblLoginError").append("<p>Username or password are wrong.<br>" +
                     "Please try again!</p>");
             }
@@ -147,8 +160,10 @@ if( isset( $_SESSION['sUserName'] ) )
         // url, data, callback
         $.post('.api/api-logout-user.php', $('#frmUserReg').serialize(), function ( sData ) {
             console.log( sData );
-            logInPage.style.display = "grid";
             adminDashboard.style.display = "none";
+            clientDashboard.style.display = "none";
+            logInPage.style.display = "grid";
+
         });
     });
 
@@ -162,17 +177,17 @@ if( isset( $_SESSION['sUserName'] ) )
             '</tr>';
         $.getJSON( 'api/api-get-users.php' , function( jData ){
             console.log("xx");
-                console.log(jData);
-                for(var i = 0; i<jData.length; i++){
-                    console.log(jData[i].id);
-                    sTrTdElements += '<tr>'+
-                        '<td id="'+jData[i].id+'"onclick='+"getContent(this)"+'>'+jData[i].id+'</td>'+
-                        '<td>'+jData[i].firstName+'</td>'+
-                        '<td>'+jData[i].lastName+'</td>'+
-                        '<td>'+jData[i].email+'</td>'+
-                        '</tr>';
-                }
-                tableData.innerHTML = sTrTdElements;
+            console.log(jData);
+            for(var i = 0; i<jData.length; i++){
+                console.log(jData[i].id);
+                sTrTdElements += '<tr>'+
+                    '<td id="'+jData[i].id+'"onclick='+"getContent(this)"+'>'+jData[i].id+'</td>'+
+                    '<td>'+jData[i].firstName+'</td>'+
+                    '<td>'+jData[i].lastName+'</td>'+
+                    '<td>'+jData[i].email+'</td>'+
+                    '</tr>';
+            }
+            tableData.innerHTML = sTrTdElements;
         }); // AJAX
 
     });
@@ -211,7 +226,7 @@ if( isset( $_SESSION['sUserName'] ) )
                 function( jData ){
                     console.log( jData );
                     selectedId="";
-            }); // AJAX
+                }); // AJAX
         }
     });
 
@@ -227,14 +242,14 @@ if( isset( $_SESSION['sUserName'] ) )
     });
 
     $('#btnEditUser').click(function(){
-       if(selectedId!=""){
-           $.post(   'api/api-edit-user.php?id='+selectedId ,
-               $('#frmUserReg').serialize(),
-               function( jData ){
-                   console.log( jData );
-                   selectedId="";
-               }); // AJAX
-       }
+        if(selectedId!=""){
+            $.post(   'api/api-edit-user.php?id='+selectedId ,
+                $('#frmUserReg').serialize(),
+                function( jData ){
+                    console.log( jData );
+                    selectedId="";
+                }); // AJAX
+        }
     });
 
     $('#btnEditProduct').click(function(){
